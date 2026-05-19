@@ -12,7 +12,7 @@ class LoginController extends Controller
 {
     public function showLoginForm(): View|RedirectResponse
     {
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -26,9 +26,9 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            if (! Auth::user()->isAdmin()) {
-                Auth::logout();
+        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+            if (! Auth::guard('admin')->user()->isAdmin()) {
+                Auth::guard('admin')->logout();
 
                 return back()->withErrors(['email' => 'Acesso restrito a administradores.']);
             }
@@ -43,7 +43,7 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

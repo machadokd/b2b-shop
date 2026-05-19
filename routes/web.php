@@ -26,7 +26,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('login', [AdminLoginController::class, 'login']);
     Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
 
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::middleware(['auth:admin', 'role:admin'])->group(function () {
         Route::get('dashboard', function () {
             return view('admin.dashboard', [
                 'totalProducts' => Product::active()->count(),
