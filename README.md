@@ -1,58 +1,331 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# B2B Shop
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Mini loja B2B em Laravel 13 com backoffice completo, front office, API REST com autenticação Sanctum, queue jobs com Redis, e broadcasting em tempo real com Socket.IO.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Dependência | Versão mínima |
+|---|---|
+| PHP | 8.3 |
+| Composer | 2.x |
+| Node.js | 18+ |
+| MySQL | 8.0 |
+| Redis | 7.x |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> Com Docker: apenas Docker + Docker Compose são necessários para MySQL e Redis.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Instalação
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Clonar o repositório
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-do-repo> b2b-shop
+cd b2b-shop
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instalar dependências PHP e Node
 
-## Contributing
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Configurar o ambiente
 
-## Code of Conduct
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Editar `.env` com as credenciais locais (ver secção [Configuração .env](#configuração-env)).
 
-## Security Vulnerabilities
+### 4. Iniciar MySQL e Redis com Docker
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+docker-compose up -d
+```
 
-## License
+Aguardar o MySQL ficar disponível (verificar com `docker-compose ps`).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Executar migrações e popular a base de dados
+
+```bash
+php artisan migrate --seed
+```
+
+### 6. Criar link de armazenamento público
+
+```bash
+php artisan storage:link
+```
+
+### 7. Compilar assets
+
+```bash
+npm run build
+```
+
+---
+
+## Configuração .env
+
+```dotenv
+APP_NAME="B2B Shop"
+APP_ENV=local
+APP_KEY=          # gerado com php artisan key:generate
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+APP_LOCALE=pt
+
+# Base de dados (MySQL via Docker na porta 3307)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3307
+DB_DATABASE=b2b_shop
+DB_USERNAME=b2b
+DB_PASSWORD=secret
+
+# Redis
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+# Queue — processar jobs de forma assíncrona
+QUEUE_CONNECTION=redis
+
+# Broadcasting — Socket.IO em tempo real
+BROADCAST_CONNECTION=redis
+
+# Cache
+CACHE_STORE=redis
+
+# Mail — log em desenvolvimento (ver storage/logs/laravel.log)
+MAIL_MAILER=log
+
+# Sessão
+SESSION_DRIVER=database
+```
+
+---
+
+## Execução
+
+### Modo de desenvolvimento (todos os processos)
+
+```bash
+composer dev
+```
+
+Este comando inicia em paralelo: servidor Laravel, queue worker, log watcher e Vite dev server.
+
+### Processos individuais
+
+```bash
+# Servidor Laravel
+php artisan serve
+
+# Queue worker (Redis)
+php artisan queue:work redis --queue=high,default,low
+
+# Socket.IO server (broadcasting em tempo real)
+npx laravel-echo-server start
+
+# Vite dev server (hot reload de assets)
+npm run dev
+```
+
+---
+
+## Credenciais de teste
+
+Após `php artisan migrate --seed`:
+
+| Papel | Email | Password |
+|---|---|---|
+| Administrador | admin@loja.com | password |
+| Cliente | cliente@loja.com | password |
+
+---
+
+## Testes
+
+```bash
+# Todos os testes
+php artisan test
+
+# Apenas testes de regressão
+php artisan test --filter=Regression
+
+# Com cobertura (requer Xdebug)
+php artisan test --coverage
+```
+
+Os testes usam SQLite in-memory — sem dependência de MySQL.
+
+---
+
+## Qualidade de código
+
+```bash
+# Formatar código (Pint)
+composer lint
+
+# Verificar formatação sem alterar
+composer lint:check
+
+# Análise estática nível 5 (PHPStan/Larastan)
+composer analyse
+
+# Pipeline completo (lint + analyse + test)
+composer qa
+```
+
+---
+
+## API REST
+
+Base URL: `http://localhost:8000/api/v1`
+
+Autenticação: Bearer token (Laravel Sanctum).
+
+### Autenticação
+
+```bash
+# Login
+curl -X POST http://localhost:8000/api/v1/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@loja.com","password":"password"}'
+
+# Logout
+curl -X POST http://localhost:8000/api/v1/logout \
+  -H "Authorization: Bearer {token}"
+```
+
+### Produtos
+
+```bash
+# Listar produtos
+curl http://localhost:8000/api/v1/products \
+  -H "Authorization: Bearer {token}"
+
+# Detalhe de produto
+curl http://localhost:8000/api/v1/products/1 \
+  -H "Authorization: Bearer {token}"
+
+# Criar produto
+curl -X POST http://localhost:8000/api/v1/products \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Produto X","sku":"SKU-001","price":19.99,"stock":100,"category_id":1}'
+
+# Actualizar produto
+curl -X PUT http://localhost:8000/api/v1/products/1 \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"price":24.99}'
+
+# Eliminar produto
+curl -X DELETE http://localhost:8000/api/v1/products/1 \
+  -H "Authorization: Bearer {token}"
+```
+
+### Catálogos, Categorias, Clientes, Moradas
+
+Seguem o mesmo padrão RESTful (`index`, `show`, `store`, `update`, `destroy`) sob:
+
+- `GET/POST /api/v1/catalogs`
+- `GET/PUT/DELETE /api/v1/catalogs/{id}`
+- `GET/POST /api/v1/categories`
+- `GET/PUT/DELETE /api/v1/categories/{id}`
+- `GET/POST /api/v1/customers`
+- `GET/PUT/DELETE /api/v1/customers/{id}`
+- `GET/POST /api/v1/customers/{customer}/addresses`
+- `GET/PUT/DELETE /api/v1/customers/{customer}/addresses/{address}`
+
+Respostas sem token → `401 Unauthorized`  
+Dados inválidos → `422 Unprocessable Entity` com detalhes de validação  
+Recurso não encontrado → `404 Not Found`
+
+---
+
+## Arquitectura
+
+```
+app/
+├── Contracts/
+│   ├── Repositories/   # Interfaces de repositório (DIP)
+│   └── Services/       # Interfaces de serviço (DIP)
+├── DTOs/               # Data Transfer Objects entre camadas
+├── Enums/              # OrderStatus com transições válidas
+├── Exceptions/         # Exceções de domínio com semântica própria
+├── Http/
+│   ├── Controllers/
+│   │   ├── Admin/      # Backoffice
+│   │   ├── Api/V1/     # REST API
+│   │   └── Shop/       # Front office
+│   └── Requests/       # Form Requests (validação)
+├── Models/             # Eloquent com relações, casts e scopes
+├── Repositories/       # Implementações Eloquent dos repositórios
+└── Services/           # Lógica de negócio
+```
+
+### Princípios aplicados
+
+- **Controllers magros** — delegam para Services via DTOs; sem lógica de negócio
+- **Repository pattern** — abstracção sobre Eloquent, testável via interfaces
+- **DTOs** — tipagem forte entre camadas (sem arrays anónimos)
+- **Custom Exceptions** — `InsufficientStockException`, `InvalidOrderStateTransitionException`, `OrderNotOwnedByCustomerException`
+- **OrderStatus Enum** — define transições válidas com `canTransitionTo()`
+- **Form Requests** — validação declarativa em todos os formulários e endpoints API
+- **API Resources** — serialização JSON desacoplada dos modelos
+
+### Decisões técnicas
+
+| Decisão | Justificação |
+|---|---|
+| `unit_price` snapshot em `order_items` | Preço no momento da compra — não pode mudar com alterações futuras ao produto |
+| SQLite nos testes | Isolamento e velocidade — sem dependência de MySQL em CI |
+| PHPUnit em vez de Pest | Incompatibilidade do Pest com `laravel/pao` no Laravel 13 |
+| Redis para queue e broadcasting | Suporte a filas prioritárias (`high,default,low`) e pub/sub para Socket.IO |
+| Soft Deletes em `products` e `customers` | Preservar integridade referencial sem perder histórico de encomendas |
+
+---
+
+## Funcionalidades
+
+### Backoffice (`/admin`)
+
+- **Catálogos** — CRUD completo, toggle activo/inactivo, associação de produtos
+- **Categorias** — CRUD com hierarquia pai/filho, dropdown com exclusão de ciclos
+- **Produtos** — CRUD com upload de imagem, filtro por categoria/estado, paginação
+- **Clientes** — CRUD com toggle de bloqueio, listagem de moradas
+- **Moradas** — CRUD nested por cliente
+- **Encomendas** — listagem com filtros, detalhe completo, alteração de estado com validação de transições
+
+### Front Office (`/shop`)
+
+- **Catálogo** — listagem de produtos activos com filtro por categoria e pesquisa, paginação
+- **Carrinho** — sessão, adicionar/alterar/remover, validação de stock
+- **Checkout** — selecção de morada, criação de encomenda em transacção, decremento de stock
+- **Encomendas** — histórico do cliente, detalhe com actualização em tempo real via Socket.IO
+
+### Tempo real
+
+O estado das encomendas actualiza automaticamente na página do cliente (sem reload) quando o administrador altera o estado no backoffice, via canal privado Socket.IO `orders.{id}`.
+
+---
+
+## Dados de seed
+
+O seeder cria:
+
+- 1 administrador (`admin@loja.com`)
+- 5 clientes (incluindo `cliente@loja.com`)
+- 2 catálogos activos
+- 4 categorias (2 com subcategorias)
+- 20 produtos activos + 5 inactivos
+- Encomendas em vários estados (`pending`, `confirmed`, `shipped`, `delivered`)

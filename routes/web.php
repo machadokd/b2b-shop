@@ -8,7 +8,11 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Shop\CartController;
+use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\LoginController as ShopLoginController;
+use App\Http\Controllers\Shop\OrderController as ShopOrderController;
+use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
@@ -61,7 +65,23 @@ Route::prefix('shop')->name('shop.')->group(function () {
     Route::post('logout', [ShopLoginController::class, 'logout'])->name('logout');
 
     Route::middleware(['auth', 'role:customer', 'customer.active'])->group(function () {
-        Route::get('products', fn () => view('shop.products'))->name('products.index');
+        // Catálogo
+        Route::resource('products', ShopProductController::class)->only(['index', 'show']);
+
+        // Carrinho
+        Route::prefix('cart')->name('cart.')->group(function () {
+            Route::get('/', [CartController::class, 'index'])->name('index');
+            Route::post('add/{product}', [CartController::class, 'add'])->name('add');
+            Route::patch('update/{productId}', [CartController::class, 'update'])->name('update');
+            Route::delete('remove/{productId}', [CartController::class, 'remove'])->name('remove');
+        });
+
+        // Checkout
+        Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+        Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+        // Encomendas
+        Route::resource('orders', ShopOrderController::class)->only(['index', 'show']);
     });
 });
 
