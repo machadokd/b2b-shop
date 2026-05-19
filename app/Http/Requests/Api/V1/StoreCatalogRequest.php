@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCatalogRequest extends FormRequest
+class StoreCatalogRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,10 +15,9 @@ class UpdateCatalogRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:catalogs,slug'],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
-            'products' => ['nullable', 'array'],
-            'products.*' => ['integer', 'exists:products,id'],
         ];
     }
 }

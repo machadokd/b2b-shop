@@ -29,10 +29,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             if (! Auth::user()->isAdmin()) {
                 Auth::logout();
+
                 return back()->withErrors(['email' => 'Acesso restrito a administradores.']);
             }
 
             $request->session()->regenerate();
+
             return redirect()->intended(route('admin.dashboard'));
         }
 

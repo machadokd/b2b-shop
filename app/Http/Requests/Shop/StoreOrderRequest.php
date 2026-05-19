@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Shop;
 
+use App\Models\Address;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -27,12 +29,12 @@ class StoreOrderRequest extends FormRequest
                     $validator->errors()->add('cart', 'O carrinho está vazio.');
                 }
 
-                /** @var \App\Models\User $user */
+                /** @var User $user */
                 $user = $this->user();
                 $customerId = $user->customer?->id;
 
                 if ($customerId) {
-                    $addressBelongs = \App\Models\Address::where('id', $this->input('address_id'))
+                    $addressBelongs = Address::where('id', $this->input('address_id'))
                         ->where('customer_id', $customerId)
                         ->exists();
 

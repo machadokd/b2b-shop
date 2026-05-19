@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shop\StoreOrderRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class CheckoutController extends Controller
             return redirect()->route('shop.cart.index')->with('error', 'O carrinho está vazio.');
         }
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $addresses = $user->customer ? $user->customer->addresses : collect();
 
@@ -32,7 +33,7 @@ class CheckoutController extends Controller
 
     public function store(StoreOrderRequest $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $customer = $user->customer;
         $cart = session('cart', []);

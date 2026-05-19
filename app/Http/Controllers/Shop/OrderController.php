@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -12,7 +12,7 @@ class OrderController extends Controller
 {
     public function index(): View
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $customerId = $user->customer?->id;
 
@@ -26,7 +26,7 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $this->authorize('view', $order);
 

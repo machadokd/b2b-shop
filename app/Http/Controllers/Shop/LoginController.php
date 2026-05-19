@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,20 +28,23 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            /** @var \App\Models\User $user */
+            /** @var User $user */
             $user = Auth::user();
 
             if ($user->isAdmin()) {
                 Auth::logout();
+
                 return back()->withErrors(['email' => 'Use o login de administrador.']);
             }
 
             if ($user->customer?->is_blocked) {
                 Auth::logout();
+
                 return back()->withErrors(['email' => 'A sua conta está bloqueada. Contacte o suporte.']);
             }
 
             $request->session()->regenerate();
+
             return redirect()->intended(route('shop.products.index'));
         }
 

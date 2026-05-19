@@ -5,7 +5,7 @@ namespace App\DTOs;
 readonly class StoreOrderDTO
 {
     /**
-     * @param StoreOrderItemDTO[] $items
+     * @param  StoreOrderItemDTO[]  $items
      */
     public function __construct(
         public int $customer_id,

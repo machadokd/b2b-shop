@@ -7,10 +7,12 @@ use App\Contracts\Repositories\ProductRepositoryInterface;
 use App\Contracts\Services\OrderServiceInterface;
 use App\DTOs\StoreOrderDTO;
 use App\DTOs\UpdateOrderStatusDTO;
+use App\Enums\OrderStatus;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\InvalidOrderStateTransitionException;
 use App\Exceptions\OrderNotOwnedByCustomerException;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class OrderService implements OrderServiceInterface
@@ -23,7 +25,7 @@ class OrderService implements OrderServiceInterface
     public function placeOrder(StoreOrderDTO $dto): Order
     {
         foreach ($dto->items as $item) {
-            /** @var \App\Models\Product|null $product */
+            /** @var Product|null $product */
             $product = $this->products->findById($item->product_id);
 
             if (! $product || $product->stock < $item->quantity) {
@@ -42,7 +44,7 @@ class OrderService implements OrderServiceInterface
             $order = $this->orders->create([
                 'customer_id' => $dto->customer_id,
                 'address_id' => $dto->address_id,
-                'status' => \App\Enums\OrderStatus::Pending,
+                'status' => OrderStatus::Pending,
                 'total' => $total,
                 'notes' => $dto->notes,
             ]);
