@@ -13,12 +13,9 @@ class OrderFactory extends Factory
 {
     public function definition(): array
     {
-        $customer = Customer::factory()->create();
-        $address = Address::factory()->create(['customer_id' => $customer->id]);
-
         return [
-            'customer_id' => $customer->id,
-            'address_id' => $address->id,
+            'customer_id' => Customer::factory(),
+            'address_id' => Address::factory(),
             'status' => OrderStatus::Pending,
             'total' => fake()->randomFloat(2, 20, 2000),
             'notes' => fake()->optional()->sentence(),
@@ -33,6 +30,11 @@ class OrderFactory extends Factory
     public function confirmed(): static
     {
         return $this->state(fn () => ['status' => OrderStatus::Confirmed]);
+    }
+
+    public function processing(): static
+    {
+        return $this->state(fn () => ['status' => OrderStatus::Processing]);
     }
 
     public function shipped(): static

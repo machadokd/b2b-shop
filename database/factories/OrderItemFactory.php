@@ -12,13 +12,11 @@ class OrderItemFactory extends Factory
 {
     public function definition(): array
     {
-        $product = Product::factory()->create();
-
         return [
             'order_id' => Order::factory(),
-            'product_id' => $product->id,
+            'product_id' => Product::factory(),
             'quantity' => fake()->numberBetween(1, 10),
-            'unit_price' => $product->price,
+            'unit_price' => fake()->randomFloat(2, 5, 500),
         ];
     }
 }
