@@ -1,7 +1,17 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Http\Controllers\Admin\AddressController;
+use App\Http\Controllers\Admin\CatalogController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Shop\LoginController as ShopLoginController;
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('customer.login'));
@@ -13,7 +23,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
 
     Route::middleware(['auth', 'role:admin'])->group(function () {
-        Route::get('dashboard', fn () => view('admin.dashboard'))->name('dashboard');
+        Route::get('dashboard', function () {
+            return view('admin.dashboard', [
+                'totalProducts' => Product::active()->count(),
+                'totalCustomers' => Customer::count(),
+                'pendingOrders' => Order::where('status', OrderStatus::Pending)->count(),
+                'totalOrders' => Order::count(),
+            ]);
+        })->name('dashboard');
+
+        // Catálogos
+        Route::resource('catalogs', CatalogController::class);
+        Route::post('catalogs/{catalog}/toggle', [CatalogController::class, 'toggleActive'])->name('catalogs.toggle');
+
+        // Categorias
+        Route::resource('categories', CategoryController::class);
+
+        // Produtos
+        Route::resource('products', ProductController::class);
+        Route::post('products/{product}/toggle', [ProductController::class, 'toggleActive'])->name('products.toggle');
+
+        // Clientes + Moradas aninhadas
+        Route::resource('customers', CustomerController::class);
+        Route::post('customers/{customer}/toggle-blocked', [CustomerController::class, 'toggleBlocked'])->name('customers.toggle-blocked');
+        Route::resource('customers.addresses', AddressController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+        // Encomendas
+        Route::resource('orders', OrderController::class)->only(['index', 'show']);
+        Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     });
 });
 
