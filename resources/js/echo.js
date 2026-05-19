@@ -6,4 +6,9 @@ window.io = io;
 window.Echo = new Echo({
     broadcaster: 'socket.io',
     host: window.location.hostname + ':6001',
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+        },
+    },
 });

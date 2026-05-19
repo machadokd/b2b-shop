@@ -78,11 +78,14 @@
 @endsection
 
 @push('scripts')
-{{-- Bloco 9: Socket.IO listener para atualização em tempo real --}}
 <script>
-// Echo.private(`orders.{{ $order->id }}`)
-//     .listen('.OrderStatusChanged', (e) => {
-//         document.getElementById('order-status-badge').textContent = e.status_label;
-//     });
+if (window.Echo) {
+    window.Echo.private('orders.{{ $order->id }}')
+        .listen('.OrderStatusChanged', (e) => {
+            const badge = document.getElementById('order-status-badge');
+            badge.textContent = e.status_label;
+            badge.className = 'badge fs-6 bg-' + e.badge_class;
+        });
+}
 </script>
 @endpush
