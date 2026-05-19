@@ -27,6 +27,7 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            /** @var \App\Models\User $user */
             $user = Auth::user();
 
             if ($user->isAdmin()) {

@@ -13,7 +13,7 @@ class OrderPolicy
             return true;
         }
 
-        return $user->customer?->id === $order->customer_id;
+        return $user->customer?->getKey() === $order->customer_id;
     }
 
     public function updateStatus(User $user): bool

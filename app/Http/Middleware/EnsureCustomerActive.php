@@ -10,6 +10,7 @@ class EnsureCustomerActive
 {
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var \App\Models\User|null $user */
         $user = $request->user();
 
         if ($user && $user->customer && $user->customer->is_blocked) {
