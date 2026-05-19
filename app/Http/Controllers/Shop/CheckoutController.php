@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Enums\OrderStatus;
+use App\Events\OrderPlaced;
 use App\Exceptions\InsufficientStockException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shop\StoreOrderRequest;
@@ -51,7 +52,7 @@ class CheckoutController extends Controller
             }
         }
 
-        $orderId = DB::transaction(function () use ($customer, $cart, $request) {
+        $order = DB::transaction(function () use ($customer, $cart, $request) {
             $total = collect($cart)->sum(fn ($i) => $i['price'] * $i['quantity']);
 
             /** @var Order $order */
@@ -68,18 +69,15 @@ class CheckoutController extends Controller
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                 ]);
-
-                // Stock decremented synchronously; Bloco 8 replaces with UpdateProductStock job
-                Product::where('id', $item['product_id'])->decrement('stock', $item['quantity']);
             }
 
             session()->forget('cart');
 
-            // Bloco 8: OrderPlaced::dispatch($order);
-
-            return $order->id;
+            return $order;
         });
 
-        return redirect()->route('shop.orders.show', $orderId)->with('success', 'Encomenda criada com sucesso!');
+        OrderPlaced::dispatch($order);
+
+        return redirect()->route('shop.orders.show', $order->id)->with('success', 'Encomenda criada com sucesso!');
     }
 }

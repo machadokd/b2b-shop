@@ -233,18 +233,18 @@ Com 2 dias, o objectivo é ter **tudo funcional e bem estruturado**, não perfei
     -H "Authorization: Bearer {token}"
   ```
 
-### Bloco 8 — Queues & Jobs (1h)
+### Bloco 8 — Queues & Jobs (1h) ✅
 
-- [ ] `QUEUE_CONNECTION=redis` no `.env`
-- [ ] `php artisan queue:failed-table && php artisan migrate`
-- [ ] Criar Jobs:
-  - [ ] `SendOrderConfirmationEmail` — Mailable simulado (log driver em dev)
-  - [ ] `NotifyOrderStatusChanged` — email simulado ao cliente
-  - [ ] `UpdateProductStock` — decrementa stock via `ProductRepository`
-  - [ ] `AuditLogJob` — `Log::channel('audit')->info(...)` 
-- [ ] Criar Events: `OrderPlaced`, `OrderStatusChanged`
-- [ ] Criar Listeners e associar aos Events
-- [ ] Registar em `EventServiceProvider` (ou via `#[AsEventListener]`)
+- [x] `QUEUE_CONNECTION=redis` no `.env`
+- [x] `php artisan queue:failed-table && php artisan migrate`
+- [x] Criar Jobs:
+  - [x] `SendOrderConfirmationEmail` — Mailable simulado (log driver em dev)
+  - [x] `NotifyOrderStatusChanged` — email simulado ao cliente
+  - [x] `UpdateProductStock` — decrementa stock via `ProductRepository`
+  - [x] `AuditLogJob` — `Log::channel('audit')->info(...)`
+- [x] Criar Events: `OrderPlaced`, `OrderStatusChanged`
+- [x] Criar Listeners e associar aos Events
+- [x] Registar via `Event::listen` em `AppServiceProvider`
 - [ ] Testar: `php artisan queue:work` + criar encomenda → verificar jobs processados
 
 ### Bloco 9 — Socket.IO com laravel-echo-server (1h)

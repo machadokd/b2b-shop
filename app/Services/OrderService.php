@@ -8,6 +8,8 @@ use App\Contracts\Services\OrderServiceInterface;
 use App\DTOs\StoreOrderDTO;
 use App\DTOs\UpdateOrderStatusDTO;
 use App\Enums\OrderStatus;
+use App\Events\OrderPlaced;
+use App\Events\OrderStatusChanged;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\InvalidOrderStateTransitionException;
 use App\Exceptions\OrderNotOwnedByCustomerException;
@@ -37,7 +39,7 @@ class OrderService implements OrderServiceInterface
             }
         }
 
-        return DB::transaction(function () use ($dto) {
+        $order = DB::transaction(function () use ($dto) {
             $total = collect($dto->items)->sum(fn ($i) => $i->unit_price * $i->quantity);
 
             /** @var Order $order */
@@ -59,6 +61,10 @@ class OrderService implements OrderServiceInterface
 
             return $order;
         });
+
+        OrderPlaced::dispatch($order);
+
+        return $order;
     }
 
     public function updateStatus(Order $order, UpdateOrderStatusDTO $dto): Order
@@ -67,9 +73,13 @@ class OrderService implements OrderServiceInterface
             throw new InvalidOrderStateTransitionException($order->status, $dto->status);
         }
 
+        $previousStatus = $order->status;
         $order->update(['status' => $dto->status]);
+        $order->refresh();
 
-        return $order->refresh();
+        OrderStatusChanged::dispatch($order, $previousStatus);
+
+        return $order;
     }
 
     public function getOrderForCustomer(int $orderId, int $customerId): Order
