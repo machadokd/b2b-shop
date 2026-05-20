@@ -306,64 +306,64 @@ php artisan test --coverage              # com cobertura (se Xdebug instalado)
 
 **README.md:**
 
-- [ ] Requisitos técnicos (PHP 8.3, Node 18+, Redis, MySQL)
-- [ ] Passos de instalação (clone → composer → npm → .env → migrate → seed → storage:link)
-- [ ] Configuração `.env` com exemplo comentado
-- [ ] Como correr: `php artisan serve`
-- [ ] Como correr queue worker: `php artisan queue:work redis --queue=high,default,low`
-- [ ] Como correr laravel-echo-server: `npx laravel-echo-server start`
-- [ ] Como correr testes: `php artisan test`
-- [ ] Credenciais de teste (admin + cliente)
-- [ ] Endpoints API com exemplos cURL
-- [ ] Descrição da arquitectura (camadas, SOLID, DTOs, Exceptions)
-- [ ] Decisões técnicas justificadas
-- [ ] Funcionalidades implementadas
+- [x] Requisitos técnicos (PHP 8.3, Node 18+, Redis, MySQL)
+- [x] Passos de instalação (clone → composer → npm → .env → migrate → seed → storage:link)
+- [x] Configuração `.env` com exemplo comentado
+- [x] Como correr: `php artisan serve`
+- [x] Como correr queue worker: `php artisan queue:work redis --queue=high,default,low`
+- [x] Como correr laravel-echo-server: `npx laravel-echo-server start`
+- [x] Como correr testes: `php artisan test`
+- [x] Credenciais de teste (admin + cliente)
+- [x] Endpoints API com exemplos cURL
+- [x] Descrição da arquitectura (camadas, SOLID, DTOs, Exceptions)
+- [x] Decisões técnicas justificadas
+- [x] Funcionalidades implementadas
 
 **Polimento:**
 
-- [ ] `./vendor/bin/pint` — fix automático de code style
-- [ ] `./vendor/bin/phpstan analyse` — verificar sem erros críticos
-- [ ] Verificar responsive (DevTools mobile)
-- [ ] Confirmar todos os flash messages de sucesso/erro
-- [ ] Confirmar confirmações antes de eliminações
-- [ ] Edge cases:
+- [x] `./vendor/bin/pint` — fix automático de code style
+- [x] `./vendor/bin/phpstan analyse` — verificar sem erros críticos
+- [x] Verificar responsive (DevTools mobile)
+- [x] Confirmar todos os flash messages de sucesso/erro
+- [x] Confirmar confirmações antes de eliminações
+- [x] Edge cases:
   - Produto sem stock → botão desactivado no front office
   - Cliente bloqueado → não consegue fazer login
   - Transição de estado inválida → mensagem de erro clara
-- [ ] Commit final: `feat: complete B2B shop implementation`
-- [ ] Tag: `git tag v1.0.0`
+- [x] Commit final: `feat: complete B2B shop implementation`
+- [x] Tag: `git tag v1.0.0`
 
 ---
 
 ## Checklist de Entrega
 
 ### Arquitectura & Qualidade
-- [ ] Controllers magros — zero lógica de negócio
-- [ ] Services com interfaces (DIP)
-- [ ] Repositories com interfaces (LSP)
-- [ ] DTOs entre camadas (tipagem forte)
-- [ ] Custom Exceptions com semântica de domínio
-- [ ] Form Requests em todos os formulários e endpoints API
-- [ ] API Resources para toda a serialização JSON
-- [ ] Eager loading em todas as listagens (zero N+1)
-- [ ] `DB::transaction()` no checkout
-- [ ] `OrderStatus` Enum com transições válidas
-- [ ] Pint a passar sem erros
-- [ ] Larastan nível 5 a passar
+- [x] Controllers magros — zero lógica de negócio
+- [x] Services com interfaces (DIP)
+- [x] Repositories com interfaces (LSP)
+- [x] DTOs entre camadas (tipagem forte)
+- [x] Custom Exceptions com semântica de domínio
+- [x] Form Requests em todos os formulários e endpoints API
+- [x] API Resources para toda a serialização JSON
+- [x] Eager loading em todas as listagens (zero N+1)
+- [x] `DB::transaction()` no checkout
+- [x] `OrderStatus` Enum com transições válidas
+- [x] Pint a passar sem erros
+- [x] Larastan nível 5 a passar
 
 ### Funcionalidades
-- [ ] Backoffice CRUD: catálogos, categorias, produtos, clientes, moradas, encomendas
-- [ ] Front office: listagem, filtro, pesquisa, carrinho, checkout, histórico
-- [ ] API REST `/api/v1/` com Sanctum (25 endpoints)
-- [ ] Queue jobs com Redis (4 jobs funcionais)
-- [ ] Socket.IO em tempo real (estado de encomenda)
-- [ ] Testes: unitários + funcionais + regressão
+- [x] Backoffice CRUD: catálogos, categorias, produtos, clientes, moradas, encomendas
+- [x] Front office: listagem, filtro, pesquisa, carrinho, checkout, histórico
+- [x] API REST `/api/v1/` com Sanctum (25 endpoints)
+- [x] Queue jobs com Redis (4 jobs funcionais)
+- [x] Socket.IO em tempo real (estado de encomenda)
+- [x] Testes: unitários + funcionais + regressão
 
 ### Documentação
-- [ ] README.md completo e reproduzível
-- [ ] `.env.example` com todas as variáveis
-- [ ] Seeders com dados realistas
-- [ ] Credenciais de exemplo documentadas
+- [x] README.md completo e reproduzível
+- [x] `.env.example` com todas as variáveis
+- [x] Seeders com dados realistas
+- [x] Credenciais de exemplo documentadas
 
 ---
 
