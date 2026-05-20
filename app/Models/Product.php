@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string|null $image
+ */
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
@@ -20,7 +23,7 @@ class Product extends Model
         'description',
         'price',
         'stock',
-        'image_path',
+        'image',
         'is_active',
     ];
 
