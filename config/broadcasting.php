@@ -66,7 +66,7 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => env('REDIS_BROADCAST_CONNECTION', 'default'),
+            'connection' => env('REDIS_BROADCAST_CONNECTION', 'broadcast'),
         ],
 
         'ably' => [

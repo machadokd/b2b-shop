@@ -1,1 +1,307 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* ─── Brand tokens ─────────────────────────────────────────────── */
+:root {
+    --brand-primary:   #2563eb;
+    --brand-primary-h: #1d4ed8;
+    --brand-accent:    #0ea5e9;
+    --brand-dark:      #0f172a;
+    --brand-surface:   #f8fafc;
+    --brand-border:    #e2e8f0;
+    --brand-text-muted:#64748b;
+    --radius-card:     0.75rem;
+    --shadow-card:     0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+    --shadow-card-hover: 0 4px 8px rgba(0,0,0,.1), 0 12px 28px rgba(0,0,0,.1);
+    --transition-fast: 180ms ease;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+body {
+    background-color: var(--brand-surface);
+    color: #1e293b;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Navbar ───────────────────────────────────────────────────── */
+.navbar-shop {
+    background: var(--brand-dark);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+}
+
+.navbar-shop .navbar-brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -.3px;
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+.navbar-shop .nav-link {
+    color: rgba(255,255,255,.75) !important;
+    font-size: .875rem;
+    font-weight: 500;
+    padding: .35rem .65rem;
+    border-radius: .4rem;
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.navbar-shop .nav-link:hover,
+.navbar-shop .nav-link.active {
+    color: #fff !important;
+    background: rgba(255,255,255,.1);
+}
+
+.navbar-shop .nav-link.active {
+    color: #fff !important;
+}
+
+/* cart badge */
+.cart-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    font-size: .65rem;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0 4px;
+    text-align: center;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-weight: 700;
+}
+
+.navbar-user-name {
+    font-size: .8rem;
+    color: rgba(255,255,255,.55);
+    padding: 0 .25rem;
+}
+
+/* ─── Cards ────────────────────────────────────────────────────── */
+.card {
+    border: 1px solid var(--brand-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--brand-border);
+    font-weight: 600;
+    font-size: .875rem;
+    padding: .85rem 1.25rem;
+}
+
+/* ─── Product cards ────────────────────────────────────────────── */
+.product-card {
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.product-card .card-img-top,
+.product-card .img-placeholder {
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.product-card .img-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.product-card .img-placeholder svg {
+    width: 48px;
+    height: 48px;
+    opacity: .35;
+}
+
+.product-card .category-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--brand-text-muted);
+    font-weight: 600;
+}
+
+.product-card .price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+}
+
+/* ─── Stock badge ──────────────────────────────────────────────── */
+.badge-stock-ok   { background: #dcfce7; color: #166534; }
+.badge-stock-low  { background: #fef3c7; color: #92400e; }
+.badge-stock-out  { background: #fee2e2; color: #991b1b; }
+
+/* ─── Buttons ──────────────────────────────────────────────────── */
+.btn-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--brand-primary-h);
+    border-color: var(--brand-primary-h);
+}
+
+/* ─── Filter bar ───────────────────────────────────────────────── */
+.filter-card {
+    background: #fff;
+    border: 1px solid var(--brand-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+/* ─── Tables ───────────────────────────────────────────────────── */
+.table > :not(caption) > * > * {
+    padding: .75rem 1rem;
+}
+
+.table thead th {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--brand-text-muted);
+    font-weight: 600;
+    background: var(--brand-surface);
+    border-bottom-width: 1px;
+}
+
+/* ─── Page titles ──────────────────────────────────────────────── */
+.page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+}
+
+/* ─── Empty state ──────────────────────────────────────────────── */
+.empty-state {
+    padding: 4rem 1rem;
+    text-align: center;
+}
+
+.empty-state svg {
+    width: 56px;
+    height: 56px;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--brand-text-muted);
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ─── Cart mobile cards ────────────────────────────────────────── */
+.cart-item-card {
+    border: 1px solid var(--brand-border);
+    border-radius: .6rem;
+    padding: 1rem;
+    background: #fff;
+}
+
+/* ─── Checkout address option ──────────────────────────────────── */
+.address-option {
+    border: 1.5px solid var(--brand-border);
+    border-radius: .6rem;
+    padding: 1rem 1.25rem;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+    cursor: pointer;
+    background: #fff;
+}
+
+.address-option:has(input:checked) {
+    border-color: var(--brand-primary);
+    background: #eff6ff;
+}
+
+/* ─── Auth layout ──────────────────────────────────────────────── */
+.auth-brand {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.auth-brand-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--brand-primary);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: .75rem;
+}
+
+.auth-brand-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+}
+
+.auth-brand h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: .15rem;
+}
+
+.auth-brand p {
+    color: var(--brand-text-muted);
+    font-size: .875rem;
+}
+
+/* ─── Breadcrumb ───────────────────────────────────────────────── */
+.breadcrumb {
+    font-size: .825rem;
+}
+
+/* ─── Order status timeline ────────────────────────────────────── */
+.status-large {
+    font-size: .9rem;
+    padding: .45rem .85rem;
+    border-radius: .5rem;
+}
+
+/* ─── Footer ───────────────────────────────────────────────────── */
+.shop-footer {
+    background: var(--brand-dark);
+    color: rgba(255,255,255,.45);
+    text-align: center;
+    padding: 1.25rem;
+    font-size: .8rem;
+    margin-top: 4rem;
+}
+
+/* ─── Responsive tweaks ────────────────────────────────────────── */
+@media (max-width: 575px) {
+    .page-title {
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    .product-card .price {
+        font-size: 1.05rem;
+    }
+}

@@ -128,8 +128,8 @@ Este comando inicia em paralelo: servidor Laravel, queue worker, log watcher e V
 # Servidor Laravel
 php artisan serve
 
-# Queue worker (Redis)
-php artisan queue:work redis --queue=high,default,low
+# Queue worker (Redis) com filas prioritárias
+php artisan queue:work redis --queue=high,default,low --tries=3 --timeout=60
 
 # Socket.IO server (broadcasting em tempo real)
 npx laravel-echo-server start
@@ -155,7 +155,8 @@ Após `php artisan migrate --seed`:
 
 ```bash
 # Todos os testes
-php artisan test
+composer test
+# ou: php artisan test
 
 # Apenas testes de regressão
 php artisan test --filter=Regression
@@ -188,7 +189,7 @@ composer qa
 
 ## API REST
 
-Base URL: `http://localhost:8000/api`
+Base URL: `http://localhost:8000/api/v1`
 
 Autenticação: Bearer token (Laravel Sanctum).
 
@@ -196,12 +197,12 @@ Autenticação: Bearer token (Laravel Sanctum).
 
 ```bash
 # Login
-curl -X POST http://localhost:8000/api/login \
+curl -X POST http://localhost:8000/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@loja.com","password":"password"}'
 
 # Logout
-curl -X POST http://localhost:8000/api/logout \
+curl -X POST http://localhost:8000/api/v1/logout \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -209,27 +210,27 @@ curl -X POST http://localhost:8000/api/logout \
 
 ```bash
 # Listar produtos
-curl http://localhost:8000/api/products \
+curl http://localhost:8000/api/v1/products \
   -H "Authorization: Bearer {token}"
 
 # Detalhe de produto
-curl http://localhost:8000/api/products/1 \
+curl http://localhost:8000/api/v1/products/1 \
   -H "Authorization: Bearer {token}"
 
 # Criar produto
-curl -X POST http://localhost:8000/api/products \
+curl -X POST http://localhost:8000/api/v1/products \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"name":"Produto X","sku":"SKU-001","price":19.99,"stock":100,"category_id":1}'
 
 # Actualizar produto
-curl -X PUT http://localhost:8000/api/products/1 \
+curl -X PUT http://localhost:8000/api/v1/products/1 \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"price":24.99}'
 
 # Eliminar produto
-curl -X DELETE http://localhost:8000/api/products/1 \
+curl -X DELETE http://localhost:8000/api/v1/products/1 \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -237,18 +238,61 @@ curl -X DELETE http://localhost:8000/api/products/1 \
 
 Seguem o mesmo padrão RESTful (`index`, `show`, `store`, `update`, `destroy`) sob:
 
-- `GET/POST /api/catalogs`
-- `GET/PUT/DELETE /api/catalogs/{id}`
-- `GET/POST /api/categories`
-- `GET/PUT/DELETE /api/categories/{id}`
-- `GET/POST /api/customers`
-- `GET/PUT/DELETE /api/customers/{id}`
-- `GET/POST /api/customers/{customer}/addresses`
-- `GET/PUT/DELETE /api/customers/{customer}/addresses/{address}`
+- `GET/POST /api/v1/catalogs`
+- `GET/PUT/DELETE /api/v1/catalogs/{id}`
+- `GET/POST /api/v1/categories`
+- `GET/PUT/DELETE /api/v1/categories/{id}`
+- `GET/POST /api/v1/customers`
+- `GET/PUT/DELETE /api/v1/customers/{id}`
+- `GET/POST /api/v1/customers/{customer}/addresses`
+- `GET/PUT/DELETE /api/v1/customers/{customer}/addresses/{address}`
 
-Respostas sem token → `401 Unauthorized`  
-Dados inválidos → `422 Unprocessable Entity` com detalhes de validação  
-Recurso não encontrado → `404 Not Found`
+### Encomendas (cliente autenticado)
+
+```bash
+# Listar as minhas encomendas
+curl http://localhost:8000/api/v1/orders \
+  -H "Authorization: Bearer {token}"
+
+# Detalhe de encomenda
+curl http://localhost:8000/api/v1/orders/1 \
+  -H "Authorization: Bearer {token}"
+
+# Criar encomenda
+curl -X POST http://localhost:8000/api/v1/orders \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address_id": 1,
+    "items": [
+      {"product_id": 1, "quantity": 2},
+      {"product_id": 3, "quantity": 1}
+    ]
+  }'
+```
+
+### Encomendas (admin)
+
+```bash
+# Listar todas as encomendas
+curl "http://localhost:8000/api/v1/admin/orders?status=pending" \
+  -H "Authorization: Bearer {token}"
+
+# Alterar estado de encomenda
+curl -X PATCH http://localhost:8000/api/v1/admin/orders/1/status \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"confirmed"}'
+```
+
+### Respostas de erro
+
+| Código | Situação |
+|---|---|
+| `401 Unauthorized` | Sem token ou token inválido |
+| `403 Forbidden` | Sem permissão (ex: cliente a aceder endpoint de admin) |
+| `404 Not Found` | Recurso não encontrado |
+| `422 Unprocessable Entity` | Dados inválidos ou transição de estado inválida |
 
 ---
 
@@ -261,14 +305,24 @@ app/
 │   └── Services/       # Interfaces de serviço (DIP)
 ├── DTOs/               # Data Transfer Objects entre camadas
 ├── Enums/              # OrderStatus com transições válidas
+├── Events/             # Eventos de domínio (OrderPlaced, OrderStatusChanged)
 ├── Exceptions/         # Exceções de domínio com semântica própria
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Admin/      # Backoffice
-│   │   ├── Api/V1/     # REST API
+│   │   ├── Api/V1/     # REST API versionada
+│   │   │   └── Admin/  # Endpoints de admin na API
 │   │   └── Shop/       # Front office
-│   └── Requests/       # Form Requests (validação)
+│   ├── Requests/       # Form Requests (validação)
+│   │   ├── Admin/
+│   │   ├── Api/V1/
+│   │   └── Shop/
+│   └── Resources/      # API Resources (serialização JSON)
+│       └── V1/
+├── Jobs/               # Queue jobs assíncronos
+├── Listeners/          # Handlers de eventos
 ├── Models/             # Eloquent com relações, casts e scopes
+├── Policies/           # Autorização por entidade
 ├── Repositories/       # Implementações Eloquent dos repositórios
 └── Services/           # Lógica de negócio
 ```
@@ -292,6 +346,8 @@ app/
 | PHPUnit em vez de Pest | Incompatibilidade do Pest com `laravel/pao` no Laravel 13 |
 | Redis para queue e broadcasting | Suporte a filas prioritárias (`high,default,low`) e pub/sub para Socket.IO |
 | Soft Deletes em `products` e `customers` | Preservar integridade referencial sem perder histórico de encomendas |
+| API versionada `/api/v1/` | Zero custo, boa prática, evita breaking changes futuros |
+| laravel-echo-server em vez de Reverb | Reverb usa protocolo Pusher; laravel-echo-server expõe Socket.IO nativo conforme requisito |
 
 ---
 
@@ -313,9 +369,26 @@ app/
 - **Checkout** — selecção de morada, criação de encomenda em transacção, decremento de stock
 - **Encomendas** — histórico do cliente, detalhe com actualização em tempo real via Socket.IO
 
+### API REST (`/api/v1`)
+
+- 25 endpoints com autenticação Sanctum
+- CRUD completo: produtos, catálogos, categorias, clientes, moradas
+- Encomendas para cliente autenticado (`index`, `show`, `store`)
+- Gestão de encomendas para admin (`index`, `show`, `updateStatus`)
+- Respostas estruturadas com API Resources e paginação Laravel
+
 ### Tempo real
 
 O estado das encomendas actualiza automaticamente na página do cliente (sem reload) quando o administrador altera o estado no backoffice, via canal privado Socket.IO `orders.{id}`.
+
+### Queues (Redis)
+
+| Job | Trigger | Fila |
+|---|---|---|
+| `SendOrderConfirmationEmail` | `OrderPlaced` | `default` |
+| `UpdateProductStock` | `OrderPlaced` | `default` |
+| `NotifyOrderStatusChanged` | `OrderStatusChanged` | `high` |
+| `AuditLogJob` | `OrderStatusChanged` | `low` |
 
 ---
 
@@ -328,4 +401,4 @@ O seeder cria:
 - 2 catálogos activos
 - 4 categorias (2 com subcategorias)
 - 20 produtos activos + 5 inactivos
-- Encomendas em vários estados (`pending`, `confirmed`, `shipped`, `delivered`)
+- Encomendas em vários estados (`pending`, `confirmed`, `shipped`, `completed`)
