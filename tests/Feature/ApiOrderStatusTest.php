@@ -38,7 +38,7 @@ class ApiOrderStatusTest extends TestCase
     {
         Sanctum::actingAs($this->admin);
 
-        $response = $this->patchJson("/api/admin/orders/{$this->order->id}/status", [
+        $response = $this->patchJson("/api/v1/admin/orders/{$this->order->id}/status", [
             'status' => OrderStatus::Confirmed->value,
         ]);
 
@@ -55,7 +55,7 @@ class ApiOrderStatusTest extends TestCase
     {
         Sanctum::actingAs($this->admin);
 
-        $response = $this->patchJson("/api/admin/orders/{$this->order->id}/status", [
+        $response = $this->patchJson("/api/v1/admin/orders/{$this->order->id}/status", [
             'status' => OrderStatus::Completed->value,
         ]);
 
@@ -67,7 +67,7 @@ class ApiOrderStatusTest extends TestCase
     {
         Sanctum::actingAs($this->admin);
 
-        $response = $this->patchJson("/api/admin/orders/{$this->order->id}/status", [
+        $response = $this->patchJson("/api/v1/admin/orders/{$this->order->id}/status", [
             'status' => 'nonexistent',
         ]);
 
@@ -78,7 +78,7 @@ class ApiOrderStatusTest extends TestCase
     {
         Sanctum::actingAs($this->admin);
 
-        $response = $this->getJson('/api/admin/orders');
+        $response = $this->getJson('/api/v1/admin/orders');
 
         $response->assertOk();
         $response->assertJsonStructure(['data', 'meta']);
@@ -88,7 +88,7 @@ class ApiOrderStatusTest extends TestCase
     {
         Sanctum::actingAs($this->admin);
 
-        $response = $this->getJson('/api/admin/orders?status=pending');
+        $response = $this->getJson('/api/v1/admin/orders?status=pending');
 
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
@@ -99,7 +99,7 @@ class ApiOrderStatusTest extends TestCase
         $customerUser = User::factory()->customer()->create();
         Sanctum::actingAs($customerUser);
 
-        $response = $this->patchJson("/api/admin/orders/{$this->order->id}/status", [
+        $response = $this->patchJson("/api/v1/admin/orders/{$this->order->id}/status", [
             'status' => OrderStatus::Confirmed->value,
         ]);
 

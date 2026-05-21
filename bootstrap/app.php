@@ -72,5 +72,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
+
+            return redirect()->guest($e->redirectTo($request) ?? route('customer.login'));
         });
     })->create();

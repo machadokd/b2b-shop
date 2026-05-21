@@ -27,6 +27,12 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        if (! $user->isAdmin()) {
+            Auth::logout();
+
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([

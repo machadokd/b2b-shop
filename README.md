@@ -195,8 +195,10 @@ Autenticação: Bearer token (Laravel Sanctum).
 
 ### Autenticação
 
+> **Apenas administradores** podem autenticar-se na API. Clientes recebem `403 Forbidden` mesmo com credenciais válidas — usam a sessão web (`/shop/login`).
+
 ```bash
-# Login
+# Login (só admins)
 curl -X POST http://localhost:8000/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@loja.com","password":"password"}'
@@ -244,8 +246,8 @@ Seguem o mesmo padrão RESTful (`index`, `show`, `store`, `update`, `destroy`) s
 - `GET/PUT/DELETE /api/v1/categories/{id}`
 - `GET/POST /api/v1/customers`
 - `GET/PUT/DELETE /api/v1/customers/{id}`
-- `GET/POST /api/v1/customers/{customer}/addresses`
-- `GET/PUT/DELETE /api/v1/customers/{customer}/addresses/{address}`
+- `GET/POST /api/v1/addresses`
+- `GET/PUT/DELETE /api/v1/addresses/{id}`
 
 ### Encomendas (cliente autenticado)
 
@@ -290,7 +292,7 @@ curl -X PATCH http://localhost:8000/api/v1/admin/orders/1/status \
 | Código | Situação |
 |---|---|
 | `401 Unauthorized` | Sem token ou token inválido |
-| `403 Forbidden` | Sem permissão (ex: cliente a aceder endpoint de admin) |
+| `403 Forbidden` | Sem permissão (ex: cliente a tentar fazer login na API, ou a aceder endpoint de admin) |
 | `404 Not Found` | Recurso não encontrado |
 | `422 Unprocessable Entity` | Dados inválidos ou transição de estado inválida |
 
@@ -371,7 +373,7 @@ app/
 
 ### API REST (`/api/v1`)
 
-- 25 endpoints com autenticação Sanctum
+- 33 endpoints com autenticação Sanctum
 - CRUD completo: produtos, catálogos, categorias, clientes, moradas
 - Encomendas para cliente autenticado (`index`, `show`, `store`)
 - Gestão de encomendas para admin (`index`, `show`, `updateStatus`)

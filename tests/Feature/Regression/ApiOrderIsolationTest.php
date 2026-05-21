@@ -26,7 +26,7 @@ class ApiOrderIsolationTest extends TestCase
 
         Sanctum::actingAs($userB);
 
-        $response = $this->getJson("/api/orders/{$orderA->id}");
+        $response = $this->getJson("/api/v1/orders/{$orderA->id}");
 
         $response->assertForbidden();
     }
@@ -40,7 +40,7 @@ class ApiOrderIsolationTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->getJson("/api/orders/{$order->id}");
+        $response = $this->getJson("/api/v1/orders/{$order->id}");
 
         $response->assertOk();
         $response->assertJsonPath('data.id', $order->id);
@@ -60,7 +60,7 @@ class ApiOrderIsolationTest extends TestCase
 
         Sanctum::actingAs($userA);
 
-        $response = $this->getJson('/api/orders');
+        $response = $this->getJson('/api/v1/orders');
 
         $response->assertOk();
         $response->assertJsonCount(2, 'data');
