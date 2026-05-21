@@ -47,7 +47,7 @@ class ApiOrderCheckoutTest extends TestCase
     {
         Sanctum::actingAs($this->user);
 
-        $response = $this->postJson('/api/v1/orders', $this->validPayload(3));
+        $response = $this->postJson('/api/orders', $this->validPayload(3));
 
         $response->assertCreated();
         $response->assertJsonPath('data.status', OrderStatus::Pending->value);
@@ -63,7 +63,7 @@ class ApiOrderCheckoutTest extends TestCase
     {
         Sanctum::actingAs($this->user);
 
-        $this->postJson('/api/v1/orders', $this->validPayload(5));
+        $this->postJson('/api/orders', $this->validPayload(5));
 
         $this->assertEquals(15, $this->product->fresh()->stock);
     }
@@ -73,7 +73,7 @@ class ApiOrderCheckoutTest extends TestCase
         Sanctum::actingAs($this->user);
         $this->product->update(['stock' => 1]);
 
-        $response = $this->postJson('/api/v1/orders', $this->validPayload(5));
+        $response = $this->postJson('/api/orders', $this->validPayload(5));
 
         $response->assertUnprocessable();
         $this->assertDatabaseCount('orders', 0);
@@ -86,7 +86,7 @@ class ApiOrderCheckoutTest extends TestCase
         $otherCustomer = Customer::factory()->withUser(User::factory()->customer()->create())->create();
         $foreignAddress = Address::factory()->create(['customer_id' => $otherCustomer->id]);
 
-        $response = $this->postJson('/api/v1/orders', [
+        $response = $this->postJson('/api/orders', [
             'address_id' => $foreignAddress->id,
             'items' => [['product_id' => $this->product->id, 'quantity' => 1]],
         ]);
@@ -98,7 +98,7 @@ class ApiOrderCheckoutTest extends TestCase
     {
         Sanctum::actingAs($this->user);
 
-        $response = $this->postJson('/api/v1/orders', [
+        $response = $this->postJson('/api/orders', [
             'address_id' => $this->address->id,
             'items' => [],
         ]);
@@ -110,7 +110,7 @@ class ApiOrderCheckoutTest extends TestCase
     {
         Sanctum::actingAs(User::factory()->admin()->create());
 
-        $response = $this->postJson('/api/v1/orders', $this->validPayload());
+        $response = $this->postJson('/api/orders', $this->validPayload());
 
         $response->assertForbidden();
     }

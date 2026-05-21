@@ -188,7 +188,7 @@ composer qa
 
 ## API REST
 
-Base URL: `http://localhost:8000/api/v1`
+Base URL: `http://localhost:8000/api`
 
 Autenticação: Bearer token (Laravel Sanctum).
 
@@ -196,12 +196,12 @@ Autenticação: Bearer token (Laravel Sanctum).
 
 ```bash
 # Login
-curl -X POST http://localhost:8000/api/v1/login \
+curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@loja.com","password":"password"}'
 
 # Logout
-curl -X POST http://localhost:8000/api/v1/logout \
+curl -X POST http://localhost:8000/api/logout \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -209,27 +209,27 @@ curl -X POST http://localhost:8000/api/v1/logout \
 
 ```bash
 # Listar produtos
-curl http://localhost:8000/api/v1/products \
+curl http://localhost:8000/api/products \
   -H "Authorization: Bearer {token}"
 
 # Detalhe de produto
-curl http://localhost:8000/api/v1/products/1 \
+curl http://localhost:8000/api/products/1 \
   -H "Authorization: Bearer {token}"
 
 # Criar produto
-curl -X POST http://localhost:8000/api/v1/products \
+curl -X POST http://localhost:8000/api/products \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"name":"Produto X","sku":"SKU-001","price":19.99,"stock":100,"category_id":1}'
 
 # Actualizar produto
-curl -X PUT http://localhost:8000/api/v1/products/1 \
+curl -X PUT http://localhost:8000/api/products/1 \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"price":24.99}'
 
 # Eliminar produto
-curl -X DELETE http://localhost:8000/api/v1/products/1 \
+curl -X DELETE http://localhost:8000/api/products/1 \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -237,14 +237,14 @@ curl -X DELETE http://localhost:8000/api/v1/products/1 \
 
 Seguem o mesmo padrão RESTful (`index`, `show`, `store`, `update`, `destroy`) sob:
 
-- `GET/POST /api/v1/catalogs`
-- `GET/PUT/DELETE /api/v1/catalogs/{id}`
-- `GET/POST /api/v1/categories`
-- `GET/PUT/DELETE /api/v1/categories/{id}`
-- `GET/POST /api/v1/customers`
-- `GET/PUT/DELETE /api/v1/customers/{id}`
-- `GET/POST /api/v1/customers/{customer}/addresses`
-- `GET/PUT/DELETE /api/v1/customers/{customer}/addresses/{address}`
+- `GET/POST /api/catalogs`
+- `GET/PUT/DELETE /api/catalogs/{id}`
+- `GET/POST /api/categories`
+- `GET/PUT/DELETE /api/categories/{id}`
+- `GET/POST /api/customers`
+- `GET/PUT/DELETE /api/customers/{id}`
+- `GET/POST /api/customers/{customer}/addresses`
+- `GET/PUT/DELETE /api/customers/{customer}/addresses/{address}`
 
 Respostas sem token → `401 Unauthorized`  
 Dados inválidos → `422 Unprocessable Entity` com detalhes de validação  

@@ -11,31 +11,31 @@ class UnauthenticatedApiTest extends TestCase
 
     public function test_products_endpoint_requires_authentication(): void
     {
-        $this->getJson('/api/v1/products')->assertUnauthorized();
+        $this->getJson('/api/products')->assertUnauthorized();
     }
 
     public function test_catalogs_endpoint_requires_authentication(): void
     {
-        $this->getJson('/api/v1/catalogs')->assertUnauthorized();
+        $this->getJson('/api/catalogs')->assertUnauthorized();
     }
 
     public function test_categories_endpoint_requires_authentication(): void
     {
-        $this->getJson('/api/v1/categories')->assertUnauthorized();
+        $this->getJson('/api/categories')->assertUnauthorized();
     }
 
     public function test_customers_endpoint_requires_authentication(): void
     {
-        $this->getJson('/api/v1/customers')->assertUnauthorized();
+        $this->getJson('/api/customers')->assertUnauthorized();
     }
 
     public function test_logout_endpoint_requires_authentication(): void
     {
-        $this->postJson('/api/v1/logout')->assertUnauthorized();
+        $this->postJson('/api/logout')->assertUnauthorized();
     }
 
     public function test_create_product_requires_authentication(): void
     {
-        $this->postJson('/api/v1/products', [])->assertUnauthorized();
+        $this->postJson('/api/products', [])->assertUnauthorized();
     }
 }

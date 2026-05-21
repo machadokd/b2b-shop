@@ -15,14 +15,14 @@ class AuthenticatedApiTest extends TestCase
     {
         Sanctum::actingAs(User::factory()->admin()->create());
 
-        $response = $this->getJson('/api/v1/products');
+        $response = $this->getJson('/api/products');
 
         $response->assertOk();
     }
 
     public function test_unauthenticated_request_returns_401(): void
     {
-        $response = $this->getJson('/api/v1/products');
+        $response = $this->getJson('/api/products');
 
         $response->assertUnauthorized();
     }
@@ -31,7 +31,7 @@ class AuthenticatedApiTest extends TestCase
     {
         $user = User::factory()->admin()->create();
 
-        $response = $this->postJson('/api/v1/login', [
+        $response = $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -44,7 +44,7 @@ class AuthenticatedApiTest extends TestCase
     {
         $user = User::factory()->admin()->create();
 
-        $response = $this->postJson('/api/v1/login', [
+        $response = $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'wrong',
         ]);
