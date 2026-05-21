@@ -14,6 +14,7 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'customer_id' => ['required', 'integer', 'exists:customers,id'],
             'recipient_name' => ['required', 'string', 'max:255'],
             'address_line' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:20'],

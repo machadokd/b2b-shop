@@ -20,7 +20,7 @@ Route::name('api.')->group(function () {
         Route::apiResource('categories', CategoryController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('customers', CustomerController::class);
-        Route::apiResource('customers.addresses', AddressController::class);
+        Route::apiResource('addresses', AddressController::class);
 
         Route::middleware('role:customer')->group(function () {
             Route::apiResource('orders', OrderController::class)->only(['index', 'show', 'store']);
