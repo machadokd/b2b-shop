@@ -23,7 +23,7 @@ Mini loja B2B em Laravel 13 com backoffice completo, front office, API REST com 
 ### 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repo> b2b-shop
+git clone https://github.com/machadokd/b2b-shop.git b2b-shop
 cd b2b-shop
 ```
 
@@ -78,7 +78,7 @@ APP_NAME="B2B Shop"
 APP_ENV=local
 APP_KEY=          # gerado com php artisan key:generate
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://localhost:8002
 APP_LOCALE=pt
 
 # Base de dados (MySQL via Docker na porta 3307)
@@ -189,7 +189,7 @@ composer qa
 
 ## API REST
 
-Base URL: `http://localhost:8000/api/v1`
+Base URL: `http://localhost:8002/api/v1`
 
 Autenticação: Bearer token (Laravel Sanctum).
 
@@ -199,12 +199,12 @@ Autenticação: Bearer token (Laravel Sanctum).
 
 ```bash
 # Login (só admins)
-curl -X POST http://localhost:8000/api/v1/login \
+curl -X POST http://localhost:8002/api/v1/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@loja.com","password":"password"}'
 
 # Logout
-curl -X POST http://localhost:8000/api/v1/logout \
+curl -X POST http://localhost:8002/api/v1/logout \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -212,27 +212,27 @@ curl -X POST http://localhost:8000/api/v1/logout \
 
 ```bash
 # Listar produtos
-curl http://localhost:8000/api/v1/products \
+curl http://localhost:8002/api/v1/products \
   -H "Authorization: Bearer {token}"
 
 # Detalhe de produto
-curl http://localhost:8000/api/v1/products/1 \
+curl http://localhost:8002/api/v1/products/1 \
   -H "Authorization: Bearer {token}"
 
 # Criar produto
-curl -X POST http://localhost:8000/api/v1/products \
+curl -X POST http://localhost:8002/api/v1/products \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"name":"Produto X","sku":"SKU-001","price":19.99,"stock":100,"category_id":1}'
 
 # Actualizar produto
-curl -X PUT http://localhost:8000/api/v1/products/1 \
+curl -X PUT http://localhost:8002/api/v1/products/1 \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"price":24.99}'
 
 # Eliminar produto
-curl -X DELETE http://localhost:8000/api/v1/products/1 \
+curl -X DELETE http://localhost:8002/api/v1/products/1 \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -253,15 +253,15 @@ Seguem o mesmo padrão RESTful (`index`, `show`, `store`, `update`, `destroy`) s
 
 ```bash
 # Listar as minhas encomendas
-curl http://localhost:8000/api/v1/orders \
+curl http://localhost:8002/api/v1/orders \
   -H "Authorization: Bearer {token}"
 
 # Detalhe de encomenda
-curl http://localhost:8000/api/v1/orders/1 \
+curl http://localhost:8002/api/v1/orders/1 \
   -H "Authorization: Bearer {token}"
 
 # Criar encomenda
-curl -X POST http://localhost:8000/api/v1/orders \
+curl -X POST http://localhost:8002/api/v1/orders \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -277,11 +277,11 @@ curl -X POST http://localhost:8000/api/v1/orders \
 
 ```bash
 # Listar todas as encomendas
-curl "http://localhost:8000/api/v1/admin/orders?status=pending" \
+curl "http://localhost:8002/api/v1/admin/orders?status=pending" \
   -H "Authorization: Bearer {token}"
 
 # Alterar estado de encomenda
-curl -X PATCH http://localhost:8000/api/v1/admin/orders/1/status \
+curl -X PATCH http://localhost:8002/api/v1/admin/orders/1/status \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -d '{"status":"confirmed"}'
