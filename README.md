@@ -46,10 +46,14 @@ Editar `.env` com as credenciais locais (ver secção [Configuração .env](#con
 ### 4. Iniciar MySQL e Redis com Docker
 
 ```bash
+# Docker Desktop v2+ (recomendado)
+docker compose up -d
+
+# Docker legado (v1)
 docker-compose up -d
 ```
 
-Aguardar o MySQL ficar disponível (verificar com `docker-compose ps`).
+Aguardar o MySQL ficar disponível (verificar com `docker compose ps` ou `docker-compose ps`).
 
 ### 5. Executar migrações e popular a base de dados
 
